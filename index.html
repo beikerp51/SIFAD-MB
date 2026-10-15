@@ -3,8 +3,17 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>SIFAD-MB - Sistema de Información Financiera y Archivo Documental</title>
+    <!-- Configuración PWA y Aplicación Móvil (Android APK / iOS) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e293b">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SIFAD-MB">
+    <link rel="apple-touch-icon" href="assets/images/icon-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/images/icon-192.png">
     <!-- Tailwind CSS v3 via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -245,12 +254,22 @@
         <!-- PANEL DE CONTENIDO DERECHO -->
         <div class="flex-grow flex flex-col h-screen max-h-screen overflow-y-auto min-w-0" style="overscroll-behavior: contain;">
             <!-- Barra superior rápida -->
-            <header class="bg-white border-b border-slate-200 h-16 flex-shrink-0 flex items-center justify-between px-6 md:px-8 sticky top-0 z-20">
-                <div class="flex flex-col">
-                    <span id="header-greeting" class="text-sm font-bold text-slate-800">Bienvenido</span>
-                    <span class="text-[10px] font-semibold text-slate-400 tracking-wider">Tablero / Inventario Físico / Obras y Pagos</span>
+            <header class="bg-white border-b border-slate-200 h-16 flex-shrink-0 flex items-center justify-between px-4 md:px-8 sticky top-0 z-20">
+                <div class="flex items-center gap-3 min-w-0">
+                    <button id="mobile-menu-btn" onclick="openMobileDrawer()" class="md:hidden p-2 -ml-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors flex-shrink-0" title="Menú Principal">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
+                    <div class="flex flex-col min-w-0">
+                        <span id="header-greeting" class="text-sm font-bold text-slate-800 truncate">Bienvenido</span>
+                        <span class="text-[10px] font-semibold text-slate-400 tracking-wider truncate">Tablero / Inventario / Obras</span>
+                    </div>
                 </div>
-                <div class="flex items-center gap-4 relative">
+                <div class="flex items-center gap-3 relative flex-shrink-0">
+                    <!-- Botón de Instalación PWA (Visible en teléfonos/navegadores compatibles) -->
+                    <button id="pwa-install-btn" class="hidden px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg border border-indigo-200 transition-colors flex items-center gap-1.5" onclick="triggerPwaInstall()">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span class="hidden sm:inline">Instalar App</span>
+                    </button>
                     <!-- Campana de Notificación de Préstamos Vencidos (Colocada en la Esquina) -->
                     <div class="relative">
                         <button onclick="toggleNotificationsDropdown(); event.stopPropagation();" class="relative p-2 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-full transition-all border border-slate-200 flex items-center justify-center" title="Alertas de préstamos">
@@ -272,7 +291,7 @@
             </header>
 
             <!-- Contenedor del Dashboard -->
-            <main class="flex-grow p-6 md:p-8 space-y-6 max-w-[1450px] w-full mx-auto">
+            <main class="flex-grow p-4 md:p-8 space-y-6 max-w-[1450px] w-full mx-auto pb-24 md:pb-8">
 
                 <!-- Tarjetas de Estadísticas Claras -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -1087,6 +1106,88 @@
     <script src="assets/js/report.js"></script>
     <script src="assets/js/backup.js"></script>
     
+    <!-- ==============================================================================
+       COMPONENTE MÓVIL: CAJÓN DE NAVEGACIÓN LATERAL (Mobile Drawer para iOS y Android)
+       ============================================================================== -->
+    <div id="mobile-drawer-overlay" onclick="closeMobileDrawer()"
+        class="fixed inset-0 bg-slate-950/50 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 md:hidden no-print">
+    </div>
+
+    <aside id="mobile-drawer"
+        class="fixed top-0 bottom-0 left-0 w-72 max-w-[85vw] bg-slate-900 border-r border-slate-800 p-6 flex flex-col justify-between z-50 -translate-x-full transition-transform duration-300 ease-in-out md:hidden no-print safe-top safe-bottom">
+        <div class="space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <img src="assets/images/logo_gestion.png" alt="Gestión de Archivo" class="h-10 w-10 object-contain rounded-lg bg-slate-800 p-1">
+                    <div>
+                        <p class="font-bold text-white text-xs">SIFAD-MB</p>
+                        <p class="text-[9px] text-indigo-400 font-bold uppercase tracking-wider">Gestión de Archivo</p>
+                    </div>
+                </div>
+                <button onclick="closeMobileDrawer()" class="p-2 text-slate-400 hover:text-white rounded-lg" title="Cerrar">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <nav class="space-y-1.5">
+                <a href="index.html" onclick="closeMobileDrawer()" class="sidebar-link active">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" onclick="closeMobileDrawer(); openCreateDocModal(); return false;" class="sidebar-link">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <span>Nuevo Expediente</span>
+                </a>
+                <a href="#" onclick="closeMobileDrawer(); document.getElementById('search-input')?.focus(); return false;" class="sidebar-link">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <span>Consulta Rápida</span>
+                </a>
+                <a href="index.html?view=reports" target="_blank" onclick="closeMobileDrawer()" class="sidebar-link">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <span>Reportes Semanales</span>
+                </a>
+                <a href="index.html?view=config" target="_blank" onclick="closeMobileDrawer()" class="sidebar-link">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <span>Usuarios y Asistentes</span>
+                </a>
+                <a href="index.html?view=config" target="_blank" onclick="closeMobileDrawer()" class="sidebar-link">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <span>Configuración</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="pt-6 border-t border-slate-800">
+            <button onclick="logoutSession()"
+                class="w-full py-2.5 bg-red-600/15 hover:bg-red-600/25 text-red-400 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                <span>Cerrar Sesión</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- ==============================================================================
+       BARRA DE ACCESO RÁPIDO INFERIOR (Mobile Bottom Bar para Android / iOS)
+       ============================================================================== -->
+    <nav id="mobile-bottom-bar" class="mobile-bottom-bar md:hidden no-print">
+        <a href="index.html" class="mobile-bottom-item active">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            <span>Inicio</span>
+        </a>
+        <button onclick="openCreateDocModal()" class="mobile-bottom-item">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>Nuevo</span>
+        </button>
+        <button onclick="document.getElementById('search-input')?.focus(); window.scrollTo({top: 0, behavior: 'smooth'});" class="mobile-bottom-item">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <span>Buscar</span>
+        </button>
+        <button onclick="openMobileDrawer()" class="mobile-bottom-item">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <span>Menú</span>
+        </button>
+    </nav>
+
     <!-- Contenedor para impresión de boleta de préstamo (oculto en pantalla, visible en print) -->
     <div id="boleta-print-screen" class="hidden"></div>
 </body>

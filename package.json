@@ -1,0 +1,20 @@
+{
+  "name": "sifad-mb",
+  "version": "1.0.0",
+  "description": "Sistema de Información Financiera y Archivo Documental (SIFAD-MB) - Alcaldía Bolivariana de Maracaibo",
+  "author": "Beiker Alfredo Pérez Arrieta",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "powershell -ExecutionPolicy Bypass -File .\\webserver.ps1",
+    "cap:add:android": "npx cap add android",
+    "cap:sync": "npx cap sync",
+    "cap:open:android": "npx cap open android",
+    "cap:build": "npx cap sync android"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/ios": "^6.0.0"
+  }
+}

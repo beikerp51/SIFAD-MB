@@ -91,3 +91,78 @@ function showToast(message, type = 'info') {
         setTimeout(() => toast.remove(), 500);
     }, 4000);
 }
+
+/**
+ * ==============================================================================
+ * CONTROLADORES MÓVILES Y PWA (ANDROID APK / iOS / TABLETS)
+ * ==============================================================================
+ */
+
+/**
+ * Abre el cajón lateral de navegación en pantallas móviles.
+ */
+function openMobileDrawer() {
+    const overlay = document.getElementById('mobile-drawer-overlay');
+    const drawer = document.getElementById('mobile-drawer');
+    if (overlay && drawer) {
+        overlay.classList.remove('opacity-0', 'pointer-events-none');
+        overlay.classList.add('opacity-100', 'pointer-events-auto');
+        drawer.classList.remove('-translate-x-full');
+        drawer.classList.add('translate-x-0');
+    }
+}
+
+/**
+ * Cierra el cajón lateral de navegación móvil.
+ */
+function closeMobileDrawer() {
+    const overlay = document.getElementById('mobile-drawer-overlay');
+    const drawer = document.getElementById('mobile-drawer');
+    if (overlay && drawer) {
+        overlay.classList.add('opacity-0', 'pointer-events-none');
+        overlay.classList.remove('opacity-100', 'pointer-events-auto');
+        drawer.classList.add('-translate-x-full');
+        drawer.classList.remove('translate-x-0');
+    }
+}
+
+// Gestión del evento de instalación nativa PWA (Android / Chrome / Edge)
+let deferredPwaPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPwaPrompt = e;
+    const installBtn = document.getElementById('pwa-install-btn');
+    if (installBtn) {
+        installBtn.classList.remove('hidden');
+    }
+});
+
+function triggerPwaInstall() {
+    if (deferredPwaPrompt) {
+        deferredPwaPrompt.prompt();
+        deferredPwaPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                showToast("¡SIFAD-MB instalándose en tu dispositivo móvil!", "success");
+            }
+            deferredPwaPrompt = null;
+            const installBtn = document.getElementById('pwa-install-btn');
+            if (installBtn) installBtn.classList.add('hidden');
+        });
+    } else {
+        showToast("Para instalar en iPhone: pulsa Compartir y selecciona 'Agregar a Inicio'", "info");
+    }
+}
+
+// Registro automático del Service Worker PWA para capacidades offline y empaquetado APK
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then((reg) => {
+                console.log('[SIFAD-MB] PWA Service Worker registrado con éxito. Scope:', reg.scope);
+            })
+            .catch((err) => {
+                console.warn('[SIFAD-MB] Registro de Service Worker omitido:', err);
+            });
+    });
+}
+
