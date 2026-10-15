@@ -33,14 +33,20 @@ El sistema implementa una arquitectura modular que optimiza:
 
 ## 💻 Instrucciones de Instalación y Ejecución Local
 
-### Prerrequisitos
+### 🌐 Acceso Directo en Línea (PWA / Web)
+El sistema se encuentra desplegado y accesible públicamente con soporte completo para navegadores móviles y de escritorio en:
+👉 **[https://beikerp51.github.io/SIFAD-MB/](https://beikerp51.github.io/SIFAD-MB/)**
+
+---
+
+### Prerrequisitos para Ejecución Local
 - Cualquier navegador web moderno (Google Chrome, Microsoft Edge, Mozilla Firefox o Brave).
 - PowerShell (incluido de forma nativa en Windows) o cualquier servidor web estático.
 
-### Ejecución con el Servidor Integrado
-1. Clone este repositorio o descargue la carpeta del proyecto:
+### Ejecución Local con Servidor Integrado
+1. Clone este repositorio:
    ```bash
-   git clone https://github.com/TU_USUARIO/SIFAD-MB.git
+   git clone https://github.com/beikerp51/SIFAD-MB.git
    ```
 2. Ingrese a la carpeta del proyecto:
    ```bash
