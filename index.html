@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIFAD-MB - Sistema de Información Financiera y Archivo Documental</title>
+    <!-- Tailwind CSS v3 via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        monday: {
+                            navy: '#1e293b',
+                            blue: '#0086f0',
+                            green: '#00c875',
+                            orange: '#ffad00',
+                            red: '#e44b44',
+                            gray: '#f3f4f6',
+                            border: '#e1e4e8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- JSZip para empaquetado ZIP cliente -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- Estilos personalizados claros -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body class="bg-[#f6f8fa] text-[#24292e] flex flex-col h-screen max-h-screen overflow-hidden relative select-none">
+
+    <!-- ==============================================================================
+       PANTALLA I: LOGIN CORPORATIVO CLARO (Sin Modo Oscuro)
+       ============================================================================== -->
+    <div id="login-screen"
+        class="h-screen max-h-screen overflow-y-auto flex flex-col justify-between items-center py-10 px-4 w-full bg-[#f6f8fa] border-t-4 border-[#4f46e5] relative z-10" style="overscroll-behavior: contain;">
+        <div class="w-full max-w-md my-auto animate-fade-in">
+            <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-xl relative overflow-hidden">
+
+                <div class="flex flex-col items-center mb-8">
+                    <!-- Logos con fallback institucional -->
+                    <div class="flex items-center gap-4 mb-5">
+                        <div id="login-logo-alcaldia"
+                            class="h-16 w-16 bg-[#f8fafc] border border-slate-200 rounded-xl flex items-center justify-center font-bold text-slate-400 text-3xl shadow-sm overflow-hidden p-1">
+                            <img src="assets/images/logo_alcaldia.png" alt="Alcaldía Bolivariana de Maracaibo"
+                                onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden')"
+                                class="h-full w-full object-contain">
+                            <div class="hidden text-indigo-600">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                            </div>
+                        </div>
+                        <div class="h-8 w-px bg-slate-200"></div>
+                        <div id="login-logo-gestion"
+                            class="h-16 w-16 bg-[#f8fafc] border border-slate-200 rounded-xl flex items-center justify-center font-bold text-slate-400 text-3xl shadow-sm overflow-hidden p-1">
+                            <img src="assets/images/logo_gestion.png" alt="Gestión de Archivo"
+                                onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden')"
+                                class="h-full w-full object-contain">
+                            <div class="hidden text-indigo-600">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h1 class="text-base font-extrabold tracking-tight text-slate-900 text-center leading-snug">Sistema de Información Financiera y Archivo Documental</h1>
+                    <p class="text-[11px] text-indigo-600 font-extrabold tracking-widest mt-1">(SIFAD-MB)</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Dirección General de Administración y Finanzas</p>
+                    <p class="text-[10px] text-indigo-600 font-extrabold uppercase tracking-widest mt-0.5">Alcaldía Bolivariana de Maracaibo</p>
+                </div>
+
+                <form id="login-form" class="space-y-6">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-1.5">Usuario Funcionario</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            </span>
+                            <input type="text" id="login-user" required
+                                class="block w-full pl-9 pr-3 py-2.5 premium-input rounded-xl text-sm font-medium focus:ring-0"
+                                placeholder="Ingrese su usuario institucional"
+                                autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-1.5">Clave de Seguridad</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                            </span>
+                            <input type="password" id="login-pass" required
+                                class="block w-full pl-9 pr-3 py-2.5 premium-input rounded-xl text-sm focus:ring-0"
+                                placeholder="••••••••"
+                                autocomplete="new-password">
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-md">
+                        Ingresar al Sistema
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="w-full text-center relative z-10">
+            <p id="login-credits" class="text-xs text-slate-500 font-semibold tracking-wide"></p>
+        </div>
+    </div>
+
+    <!-- ==============================================================================
+       PANTALLA I-B: BLOQUEO PREVENTIVO DE RESPALDO (LUNES)
+       ============================================================================== -->
+    <div id="backup-lock-screen"
+        class="h-screen max-h-screen overflow-y-auto flex flex-col justify-between items-center py-10 px-4 w-full bg-[#f6f8fa] border-t-4 border-red-600 relative z-10 hidden" style="overscroll-behavior: contain;">
+        <div class="w-full max-w-xl my-auto animate-fade-in">
+            <div
+                class="bg-white rounded-2xl p-8 md:p-10 border border-slate-200 shadow-xl text-center relative overflow-hidden">
+                <div
+                    class="h-20 w-20 bg-red-50 border border-red-200 rounded-full flex items-center justify-center text-red-600 mx-auto mb-6">
+                    <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                </div>
+                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-1">Bloqueo Preventivo Semanal</h1>
+                <p class="text-[10px] text-red-500 font-bold uppercase tracking-widest mb-6">Plan de Resguardo Obligatorio (Módulo VI)</p>
+
+                <div
+                    class="bg-slate-50 p-5 rounded-xl border border-slate-200 text-left space-y-3 mb-8 text-xs text-slate-700">
+                    <p class="leading-relaxed">
+                        Estimado administrador <strong class="text-slate-950">Norwuin Alexander</strong>,
+                    </p>
+                    <p class="leading-relaxed">
+                        El sistema exige respaldar el archivo documental cada <strong class="text-red-600 font-bold">7
+                            días continuos</strong>. Hoy es <strong class="text-slate-950">Lunes</strong> y no se ha
+                        registrado copia de seguridad. El acceso queda suspendido temporalmente.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-4 pt-2 border-t border-slate-200">
+                        <div>
+                            <span class="text-slate-500 block font-bold uppercase tracking-wider text-[9px]">Último
+                                Respaldo:</span>
+                            <span id="lock-last-backup-date"
+                                class="text-slate-900 font-mono text-xs font-semibold">Nunca</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 block font-bold uppercase tracking-wider text-[9px]">Estado de
+                                Alerta:</span>
+                            <span
+                                class="px-2 py-0.5 bg-red-100 text-red-600 rounded border border-red-200 font-bold text-[8px] tracking-wider uppercase inline-block mt-0.5">Sobrevencido</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-xs text-slate-500 mb-6">
+                    Conecte un almacenamiento externo y descargue el archivo comprimido (.zip) para restablecer la navegación.
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <button onclick="triggerBackupDownload()"
+                        class="w-full sm:w-auto px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Descargar Respaldo (.zip)
+                    </button>
+                    <button onclick="checkUnlockState()"
+                        class="w-full sm:w-auto px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs uppercase tracking-widest rounded-xl border border-slate-200 transition-all flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        Verificar Estado
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="w-full text-center">
+            <p id="lock-credits" class="text-xs text-slate-500 font-semibold tracking-wide"></p>
+        </div>
+    </div>
+
+    <!-- ==============================================================================
+       PANTALLA II: DASHBOARD CLARO (Monday.com Light Theme)
+       ============================================================================== -->
+    <div id="dashboard-screen" class="hidden flex flex-row h-screen max-h-screen w-full overflow-hidden relative z-10 no-print">
+
+        <!-- SIDEBAR DE NAVEGACIÓN IZQUIERDA (Estilo Monday Oficial) -->
+        <aside
+            class="w-64 bg-slate-900 border-r border-slate-800 p-6 flex flex-col justify-between hidden md:flex h-screen flex-shrink-0 overflow-y-auto">
+            <div class="space-y-8">
+                <!-- Cabecera Sidebar -->
+                <div class="flex flex-col items-center text-center gap-3.5 border-b border-slate-800 pb-5">
+                    <div id="header-logo-gestion"
+                        class="h-16 w-16 bg-slate-800 rounded-xl flex items-center justify-center font-bold text-slate-400 text-xl overflow-hidden shadow-inner p-1">
+                        <img src="assets/images/logo_gestion.png" alt="Gestión de Archivo"
+                            onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden')"
+                            class="h-full w-full object-contain">
+                        <div class="hidden text-indigo-400">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span class="font-extrabold text-white text-[11px] leading-snug">Sistema de Información Financiera y Archivo Documental</span>
+                        <span class="text-[9px] text-indigo-400 font-bold uppercase tracking-widest mt-2">Gestión de Archivo</span>
+                    </div>
+                </div>
+
+                <!-- Menú de Enlaces -->
+                <nav class="space-y-1">
+                    <a href="index.html" class="sidebar-link active">
+                        <svg class="w-4 h-4 flex-shrink-0 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" onclick="openCreateDocModal(); return false;" class="sidebar-link">
+                        <svg class="w-4 h-4 flex-shrink-0 text-slate-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span>Expediente</span>
+                    </a>
+                    <a href="#" onclick="document.getElementById('search-input').focus(); return false;" class="sidebar-link">
+                        <svg class="w-4 h-4 flex-shrink-0 text-slate-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        <span>Consulta</span>
+                    </a>
+                    <a href="index.html?view=reports" target="_blank" class="sidebar-link">
+                        <svg class="w-4 h-4 flex-shrink-0 text-slate-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span>Reporte</span>
+                    </a>
+                    <a href="index.html?view=config" target="_blank" class="sidebar-link">
+                        <svg class="w-4 h-4 flex-shrink-0 text-slate-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                        <span>Usuarios</span>
+                    </a>
+                    <a id="btn-system-config" href="index.html?view=config" target="_blank" class="sidebar-link">
+                        <svg class="w-4 h-4 flex-shrink-0 text-slate-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span>Configuración</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Identificación de Sesión (Cerrar Sesión) -->
+            <div class="space-y-4">
+                <button onclick="logoutSession()"
+                    class="w-full py-2 bg-red-600/10 hover:bg-red-600/20 text-red-400 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border border-red-500/15 flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    <span>Cerrar Sesión</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- PANEL DE CONTENIDO DERECHO -->
+        <div class="flex-grow flex flex-col h-screen max-h-screen overflow-y-auto min-w-0" style="overscroll-behavior: contain;">
+            <!-- Barra superior rápida -->
+            <header class="bg-white border-b border-slate-200 h-16 flex-shrink-0 flex items-center justify-between px-6 md:px-8 sticky top-0 z-20">
+                <div class="flex flex-col">
+                    <span id="header-greeting" class="text-sm font-bold text-slate-800">Bienvenido</span>
+                    <span class="text-[10px] font-semibold text-slate-400 tracking-wider">Tablero / Inventario Físico / Obras y Pagos</span>
+                </div>
+                <div class="flex items-center gap-4 relative">
+                    <!-- Campana de Notificación de Préstamos Vencidos (Colocada en la Esquina) -->
+                    <div class="relative">
+                        <button onclick="toggleNotificationsDropdown(); event.stopPropagation();" class="relative p-2 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-full transition-all border border-slate-200 flex items-center justify-center" title="Alertas de préstamos">
+                            <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                            <span id="notification-count" class="absolute -top-1 -right-1 hidden bg-red-600 text-white font-extrabold text-[9px] h-4 w-4 rounded-full flex items-center justify-center shadow-md animate-bounce">0</span>
+                        </button>
+                        <!-- Dropdown de Notificaciones -->
+                        <div id="notifications-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden no-print">
+                            <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                                <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Préstamos Vencidos</span>
+                                <span class="text-[9px] bg-red-100 text-red-700 font-extrabold px-1.5 py-0.5 rounded-full uppercase">Alerta</span>
+                            </div>
+                            <div id="notifications-list" class="max-h-60 overflow-y-auto divide-y divide-slate-100">
+                                <p class="text-center text-slate-400 py-6 text-xs italic font-medium">No hay préstamos vencidos hoy</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Contenedor del Dashboard -->
+            <main class="flex-grow p-6 md:p-8 space-y-6 max-w-[1450px] w-full mx-auto">
+
+                <!-- Tarjetas de Estadísticas Claras -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div
+                        class="bg-white border border-slate-200/80 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Total Archivados</span>
+                            <p id="stat-total" class="text-3xl font-black text-slate-900">0</p>
+                        </div>
+                        <div
+                            class="h-11 w-11 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center border border-indigo-100">
+                            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white border border-slate-200/80 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                        <div class="space-y-1">
+                            <span
+                                class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Disponibles</span>
+                            <p id="stat-disponibles" class="text-3xl font-black text-emerald-600">0</p>
+                        </div>
+                        <div
+                            class="h-11 w-11 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center border border-emerald-100">
+                            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white border border-slate-200/80 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">En Préstamo</span>
+                            <p id="stat-prestados" class="text-3xl font-black text-blue-600">0</p>
+                        </div>
+                        <div
+                            class="h-11 w-11 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center border border-blue-100">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white border border-slate-200/80 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Exp. Incompletos</span>
+                            <p id="stat-incompletos" class="text-3xl font-black text-rose-600">0</p>
+                        </div>
+                        <div
+                            class="h-11 w-11 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center border border-rose-100">
+                            <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel de Estadísticas e Indicadores Visuales (Reactivos SVG) -->
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                            <span class="text-xs font-bold text-slate-800 uppercase tracking-wider">Estadísticas e Indicadores Visuales (Tiempo Real)</span>
+                        </div>
+                        <button onclick="toggleChartsPanel()" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold transition-all">
+                            Mostrar/Ocultar Gráficos
+                        </button>
+                    </div>
+                    <div id="charts-panel" class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                        <!-- Gráfico 1: Estatus de Documentos -->
+                        <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl flex flex-col items-center justify-center min-h-[220px]">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Distribución por Estatus</span>
+                            <div id="chart-status-svg" class="w-full flex justify-center"></div>
+                        </div>
+                        <!-- Gráfico 2: Origen de Fondo -->
+                        <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl flex flex-col items-center justify-center min-h-[220px]">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Origen de los Fondos</span>
+                            <div id="chart-funds-svg" class="w-full flex justify-center"></div>
+                        </div>
+                        <!-- Gráfico 3: Tipo de Expediente -->
+                        <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl flex flex-col items-center justify-center min-h-[220px]">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Tipos de Expedientes</span>
+                            <div id="chart-types-svg" class="w-full flex justify-center"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Herramientas de Filtro -->
+                <div
+                    class="bg-white border border-slate-200/80 p-4 rounded-2xl md:flex md:items-center md:justify-between gap-4 shadow-sm">
+                    <!-- Filtros -->
+                    <div class="flex flex-wrap items-center gap-3 flex-grow">
+                        <div class="relative w-full max-w-xs">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            </span>
+                            <input type="text" id="search-input" oninput="applyFilters()"
+                                class="block w-full pl-9 pr-3 py-1.5 premium-input rounded-lg text-xs focus:ring-0 focus:outline-none placeholder-slate-400"
+                                placeholder="Buscar código, contratista...">
+                        </div>
+                        <select id="filter-year" onchange="applyFilters()"
+                            class="premium-input rounded-lg py-1.5 px-3 text-xs font-bold text-slate-500 focus:outline-none">
+                            <option value="">AÑO FISCAL (TODOS)</option>
+                        </select>
+                        <select id="filter-type" onchange="applyFilters()"
+                            class="premium-input rounded-lg py-1.5 px-3 text-xs font-bold text-slate-500 focus:outline-none">
+                            <option value="">TIPO (TODOS)</option>
+                            <option value="Orden de Pago">Orden de Pago</option>
+                            <option value="Proyecto">Proyecto</option>
+                            <option value="Obra">Obra</option>
+                            <option value="Contrato">Contrato</option>
+                            <option value="Factura">Factura</option>
+                        </select>
+                        <select id="filter-status" onchange="applyFilters()"
+                            class="premium-input rounded-lg py-1.5 px-3 text-xs font-bold text-slate-500 focus:outline-none">
+                            <option value="">ESTATUS (TODOS)</option>
+                            <option value="Disponible">Disponible</option>
+                            <option value="Pendiente por Archivar">Pendiente por Archivar</option>
+                            <option value="Prestado">Prestado</option>
+                            <option value="Incompleto">Incompleto</option>
+                        </select>
+                        <button onclick="exportToExcel()" class="premium-input rounded-lg py-1.5 px-3.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            <span>Exportar Excel</span>
+                        </button>
+                    </div>
+
+                    <!-- Botón de Escritura -->
+                    <div>
+                        <button id="btn-new-document" onclick="openCreateDocModal()"
+                            class="w-full md:w-auto px-4 py-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-xs uppercase tracking-widest rounded-lg shadow-sm transition-all hidden flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            <span>Registrar Expediente</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabla Monday.com Ligera -->
+                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse table-compact">
+                            <thead>
+                                <tr
+                                    class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                    <th class="px-3 py-3 w-[15%]">Código Correlativo</th>
+                                    <th class="px-3 py-3 w-[12%]">Tipo</th>
+                                    <th class="px-3 py-3 w-[25%]">Asunto o Proyecto</th>
+                                    <th class="px-3 py-3 w-[12%]">Monto Financiero</th>
+                                    <th class="px-3 py-3 w-[15%]">Adjudicado (Contratista)</th>
+                                    <th class="px-3 py-3 w-[10%]">Clasificación</th>
+                                    <th class="px-3 py-3 w-[12%]">Coordenada Física</th>
+                                    <th class="px-3 py-3 text-center w-[10%]">Estatus</th>
+                                    <th class="px-3 py-3 text-center w-[12%]">Acción de Control</th>
+                                </tr>
+                            </thead>
+                            <tbody id="document-table-body" class="divide-y divide-slate-200">
+                                <tr>
+                                    <td colspan="9" class="text-center py-12 text-slate-500 font-semibold">
+                                        Cargando inventario físico documental...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </main>
+
+            <!-- Pie de página -->
+            <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
+                <div class="max-w-7xl mx-auto px-4 text-center">
+                    <p id="dashboard-credits" class="text-xs text-slate-500 font-semibold tracking-wide"></p>
+                </div>
+            </footer>
+        </div>
+
+    </div>
+
+    <!-- ==============================================================================
+       CAJÓN DE DETALLES DERECHO SLIDE-IN (Réplica Monday.com Updates Drawer)
+       ============================================================================== -->
+    <div id="details-drawer"
+        class="fixed right-0 top-0 h-full w-[450px] md:w-[580px] bg-white z-50 shadow-2xl border-l border-slate-300 transform translate-x-full overflow-y-auto flex flex-col no-print">
+        <!-- Encabezado Cajón -->
+        <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+            <div class="flex flex-col">
+                <span id="drawer-doc-code" class="text-sm font-mono font-bold text-slate-900">#CÓDIGO</span>
+                <span id="drawer-doc-title" class="text-xs text-slate-500 truncate max-w-[280px]">Detalle del
+                    expediente...</span>
+            </div>
+            <button onclick="closeDetailsDrawer()"
+                class="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition-colors" title="Cerrar">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <!-- Barra de Pestañas del Cajón -->
+        <div class="flex border-b border-slate-200 px-4 bg-slate-50/50">
+            <button id="tab-btn-details" onclick="switchDrawerTab('details')"
+                class="drawer-tab active">Detalles</button>
+            <button id="tab-btn-upload" onclick="switchDrawerTab('upload')" class="drawer-tab">Archivo Digital</button>
+            <button id="tab-btn-loans" onclick="switchDrawerTab('loans')" class="drawer-tab">Préstamos</button>
+            <button id="tab-btn-timeline" onclick="switchDrawerTab('timeline')" class="drawer-tab">Línea de
+                Tiempo</button>
+        </div>
+
+        <!-- Cuerpo del Cajón (Paneles de Pestaña) -->
+        <div class="p-6 flex-grow overflow-y-auto">
+
+            <!-- PESTAÑA A: DETALLES / EDICIÓN -->
+            <div id="drawer-tab-details" class="space-y-4">
+                <form id="doc-form" class="space-y-4">
+                    <input type="hidden" id="doc-id" value="">
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Tipo
+                                de Documento</label>
+                            <select id="doc-tipo" required
+                                class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-semibold focus:outline-none">
+                                <option value="Orden de Pago">Orden de Pago</option>
+                                <option value="Proyecto">Proyecto</option>
+                                <option value="Obra">Obra</option>
+                                <option value="Contrato">Contrato</option>
+                                <option value="Factura">Factura</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Beneficiario
+                                / Contratista</label>
+                            <input type="text" id="doc-beneficiario" required
+                                class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-medium">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Título o
+                            Concepto Detallado del Pago/Obra</label>
+                        <textarea id="doc-titulo" rows="3" required
+                            class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-medium"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Monto
+                                (VES)</label>
+                            <input type="number" step="0.01" id="doc-monto" required
+                                class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Año
+                                Fiscal</label>
+                            <input type="number" id="doc-ano_fiscal" required
+                                class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-medium">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Origen
+                                de Fondo</label>
+                            <select id="doc-origen_fondo" required
+                                class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-medium">
+                                <option value="FCI">FCI</option>
+                                <option value="Ingresos Propios">Ingresos Propios</option>
+                                <option value="Situado Constitucional">Situado Constitucional</option>
+                                <option value="Aporte Especial">Aporte Especial</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Ubicación
+                            Física en Archivo</label>
+                        <input type="text" id="doc-ubicacion" oninput="update2DRackMap()" required placeholder="Ej: Estante A, Caja 3, Carpeta 12"
+                            class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-medium">
+                    </div>
+
+                    <!-- Mapa Visual de Estanterías Físicas (2D) -->
+                    <div class="bg-slate-50 p-4 border border-slate-200 rounded-xl space-y-2">
+                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Ubicador de Archivo Físico Interactivo (Estanterías)</span>
+                        <div id="rack-map-container" class="grid grid-cols-4 gap-2 bg-white p-3 rounded-lg border border-slate-100">
+                            <!-- Inyectado dinámicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Checklist de Firmas y Sellos -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center justify-between">
+                        <div class="space-y-0.5">
+                            <span
+                                class="text-[10px] font-bold text-slate-700 uppercase tracking-wider block">Verificación
+                                Física</span>
+                            <span class="text-[9px] text-slate-400 font-semibold block">¿Firmas y sellos
+                                completos?</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <label
+                                class="flex items-center gap-1.5 text-xs font-semibold text-slate-700 cursor-pointer">
+                                <input type="checkbox" id="doc-firmado"
+                                    class="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-0">
+                                Firmado
+                            </label>
+                            <label
+                                class="flex items-center gap-1.5 text-xs font-semibold text-slate-700 cursor-pointer">
+                                <input type="checkbox" id="doc-sellado"
+                                    class="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-0">
+                                Sellado
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="drawer-details-actions" class="pt-4 border-t border-slate-200 flex justify-end gap-2">
+                        <button type="submit"
+                            class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm">
+                            Guardar Expediente
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- PESTAÑA B: ARCHIVO DIGITALIZADO -->
+            <div id="drawer-tab-upload" class="space-y-6 hidden">
+                <!-- Selector de carga -->
+                <div id="drawer-upload-form-container">
+                    <form id="upload-form" class="space-y-3 bg-slate-50 p-4 border border-slate-200 rounded-xl">
+                        <input type="hidden" id="upload-doc-id" value="">
+                        <span
+                            class="text-[10px] font-bold text-slate-700 uppercase tracking-wider block border-b border-slate-200 pb-1">Cargar
+                            Copia Digitalizada</span>
+                        <div class="flex items-center gap-2">
+                            <input type="file" id="upload-file" required accept=".pdf,.png,.jpg,.jpeg"
+                                class="block w-full border border-slate-300 rounded-lg p-1 text-xs bg-white">
+                            <button type="submit"
+                                class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg uppercase transition-colors shadow-sm">
+                                Subir
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Contenedor del Visor Lazy Loaded -->
+                <div class="space-y-2">
+                    <span class="text-[10px] font-bold text-slate-700 uppercase tracking-wider block">Visualizador
+                        Escaneado</span>
+                    <div id="viewer-content-container"
+                        class="border border-slate-200 rounded-xl overflow-hidden bg-slate-100 flex items-center justify-center min-h-[300px] w-full">
+                        <span class="text-slate-400 text-xs italic font-medium">Sin digitalización cargada</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PESTAÑA C: TRAZABILIDAD Y PRÉSTAMOS -->
+            <div id="drawer-tab-loans" class="space-y-6 hidden">
+
+                <!-- Estado actual de préstamos -->
+                <div class="p-4 rounded-xl border flex items-center justify-between" id="drawer-loan-status-card">
+                    <div class="space-y-0.5">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Estado de
+                            Disponibilidad</span>
+                        <span id="drawer-loan-status-badge"
+                            class="px-3 py-1 text-xs font-bold rounded-full inline-block mt-1">Disponible</span>
+                    </div>
+                    <div id="drawer-loan-active-actions">
+                        <!-- Botón de devolución dinámico -->
+                    </div>
+                </div>
+
+                <!-- Formulario de Préstamo (Salida) -->
+                <div id="drawer-loan-form-container"
+                    class="space-y-3 bg-slate-50 p-4 border border-slate-200 rounded-xl hidden">
+                    <span
+                        class="text-[10px] font-bold text-slate-700 uppercase tracking-wider block border-b border-slate-200 pb-1">Registrar
+                        Salida Física</span>
+                    <form id="loan-form" class="space-y-4">
+                        <input type="hidden" id="loan-doc-id" value="">
+                        <div>
+                            <label
+                                class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Funcionario
+                                Solicitante</label>
+                            <input type="text" id="loan-funcionario" required placeholder="Nombre y Apellido"
+                                class="block w-full border border-slate-300 rounded-lg p-2 text-xs premium-input font-medium">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Oficina
+                                / Departamento Destino</label>
+                            <input type="text" id="loan-departamento" required placeholder="Ej: Contabilidad, Obras..."
+                                class="block w-full border border-slate-300 rounded-lg p-2 text-xs premium-input font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Fecha
+                                Estimada de Devolución</label>
+                            <input type="date" id="loan-fecha_estimada" required
+                                class="block w-full border border-slate-300 rounded-lg p-2 text-xs premium-input font-medium">
+                        </div>
+                        <button type="submit"
+                            class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm">
+                            Prestar Expediente
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Formulario de Retorno (Devolución) -->
+                <div id="drawer-return-form-container"
+                    class="space-y-3 bg-slate-50 p-4 border border-slate-200 rounded-xl hidden">
+                    <span
+                        class="text-[10px] font-bold text-slate-700 uppercase tracking-wider block border-b border-slate-200 pb-1">Registrar
+                        Retorno de Carpeta</span>
+                    <form id="return-form" class="space-y-4">
+                        <input type="hidden" id="return-loan-id" value="">
+                        <div class="bg-amber-100/50 p-3 rounded border border-amber-200">
+                            <p id="return-funcionario-info" class="text-xs text-amber-800 leading-normal">Detalle del
+                                préstamo activo...</p>
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Notas
+                                de Recepción</label>
+                            <textarea id="return-notas" rows="2"
+                                placeholder="Describa el estado en el que retorna el papel (folios, hojas rotas)..."
+                                class="block w-full border border-slate-300 rounded-lg p-2 text-xs premium-input font-medium"></textarea>
+                        </div>
+                        <button type="submit"
+                            class="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm">
+                            Guardar Devolución
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- PESTAÑA D: BITÁCORA TIMELINE -->
+            <div id="drawer-tab-timeline" class="hidden">
+                <ul id="timeline-list" class="space-y-5 relative border-l border-slate-200 ml-3 pl-3">
+                    <li class="text-slate-400 text-xs italic">Cargando bitácora de control...</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==============================================================================
+       MODAL CONSOLIDADO DE CONFIGURACIÓN DEL SISTEMA
+       ============================================================================== -->
+    <div id="config-modal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 backdrop-blur-sm hidden animate-fade-in no-print">
+        <div class="glass-modal w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <h3 class="font-bold text-slate-800 text-xs uppercase tracking-wider flex items-center gap-2">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    Configuración del Sistema
+                </h3>
+                <button class="config-back-btn hidden px-3 py-1 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-[10px] font-bold rounded-lg uppercase tracking-wider transition-colors" onclick="window.close()">Regresar a la página anterior</button>
+                <button onclick="closeModal('config-modal')" class="config-close-btn text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition-colors" title="Cerrar">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <!-- Barra de Pestañas de Configuración -->
+            <div class="flex border-b border-slate-200 px-6 bg-slate-50/50">
+                <button id="config-tab-btn-profile" onclick="loadConfigTab('profile')"
+                    class="px-4 py-3 text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition-all flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    <span>Mi Perfil</span>
+                </button>
+                <button id="config-tab-btn-assistants" onclick="loadConfigTab('assistants')"
+                    class="px-4 py-3 text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition-all hidden flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <span>Asistentes y ACL</span>
+                </button>
+                <button id="config-tab-btn-backups" onclick="loadConfigTab('backups')"
+                    class="px-4 py-3 text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition-all hidden flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                    <span>Copias de Seguridad</span>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto flex-grow space-y-6">
+                <!-- Panel 1: Perfil -->
+                <div id="config-panel-profile" class="space-y-4">
+                    <form id="profile-form" class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Nombre Completo</label>
+                            <input type="text" id="profile-nombre" required
+                                class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-medium focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Nombre de Usuario</label>
+                            <input type="text" id="profile-usuario" required
+                                class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-medium focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Nueva Contraseña (Opcional)</label>
+                            <input type="password" id="profile-clave" placeholder="••••••••"
+                                class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-medium focus:outline-none">
+                        </div>
+
+                        <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
+                            <button type="submit"
+                                class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold uppercase tracking-widest shadow rounded-lg transition-all">
+                                Guardar Perfil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Panel 2: Asistentes (ACL) -->
+                <div id="config-panel-assistants" class="space-y-6 hidden">
+                    <!-- Crear -->
+                    <form id="new-assistant-form" class="space-y-4 bg-slate-50 p-4 border border-slate-200 rounded-xl">
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider block border-b border-slate-200 pb-1">
+                            Registrar Cuenta Nueva
+                        </span>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Nombre Completo</label>
+                                <input type="text" id="new-fullname" required
+                                    class="block w-full border border-slate-300 rounded-lg p-2 text-xs bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Usuario</label>
+                                <input type="text" id="new-username" required
+                                    class="block w-full border border-slate-300 rounded-lg p-2 text-xs bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Clave Inicial</label>
+                                <input type="password" id="new-password" required
+                                    class="block w-full border border-slate-300 rounded-lg p-2 text-xs bg-white">
+                            </div>
+                        </div>
+
+                        <!-- Permisos -->
+                        <div class="flex flex-wrap items-center gap-4 bg-white p-2.5 rounded-lg border border-slate-200 text-xs">
+                            <span class="font-bold text-slate-600 uppercase text-[9px] tracking-wider block mr-2">Matriz de Permisos:</span>
+                            <label class="flex items-center gap-1.5 cursor-pointer font-semibold text-slate-700">
+                                <input type="checkbox" id="perm-registrar" checked
+                                    class="rounded text-indigo-600 border-slate-300 bg-white">
+                                Cargar Escaneos
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer font-semibold text-slate-700">
+                                <input type="checkbox" id="perm-editar"
+                                    class="rounded text-indigo-600 border-slate-300 bg-white">
+                                Editar
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer font-semibold text-slate-700">
+                                <input type="checkbox" id="perm-eliminar"
+                                    class="rounded text-indigo-600 border-slate-300 bg-white">
+                                Eliminar
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer font-semibold text-slate-700">
+                                <input type="checkbox" id="perm-prestar"
+                                    class="rounded text-indigo-600 border-slate-300 bg-white">
+                                Prestar
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer font-semibold text-slate-700">
+                                <input type="checkbox" id="perm-respaldar"
+                                    class="rounded text-indigo-600 border-slate-300 bg-white">
+                                Copias Seg.
+                            </label>
+                        </div>
+
+                        <div class="flex justify-end pt-1">
+                            <button type="submit"
+                                class="px-5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[9px] rounded-lg uppercase tracking-widest shadow transition-colors">
+                                Registrar Asistente
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Lista de Cuentas -->
+                    <div class="space-y-3">
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider block border-b border-slate-200 pb-1">
+                            Asistentes Registrados
+                        </span>
+                        <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
+                            <div class="max-h-48 overflow-y-auto">
+                                <table class="w-full text-[11px] text-left border-collapse table-compact">
+                                    <thead class="bg-slate-50 text-slate-500 uppercase text-[9px] font-bold border-b border-slate-200">
+                                        <tr>
+                                            <th class="p-2 font-extrabold">Nombre</th>
+                                            <th class="p-2 font-extrabold">Usuario</th>
+                                            <th class="p-2 font-extrabold text-center">Subir</th>
+                                            <th class="p-2 font-extrabold text-center">Editar</th>
+                                            <th class="p-2 font-extrabold text-center">Borrar</th>
+                                            <th class="p-2 font-extrabold text-center">Prestar</th>
+                                            <th class="p-2 font-extrabold text-center">Respaldar</th>
+                                            <th class="p-2 font-extrabold text-center">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="assistants-table-body" class="divide-y divide-slate-100">
+                                        <!-- Dinámico -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel 3: Copias de Seguridad -->
+                <div id="config-panel-backups" class="space-y-6 hidden">
+                    <!-- Respaldar -->
+                    <div class="space-y-3 p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider block">1. Copia de Seguridad Actual</span>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Descargue un archivo comprimido (.zip) con la base de datos de expedientes, digitalizaciones y préstamos.
+                        </p>
+                        <div class="flex items-center justify-between bg-white border border-slate-200 rounded-lg p-3">
+                            <span id="last-backup-info" class="text-xs text-slate-600 font-semibold font-mono">Último respaldo: Cargando...</span>
+                        </div>
+                        <button type="button" onclick="triggerBackupDownload();"
+                            class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-md transition-colors text-center uppercase tracking-widest flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            Descargar Respaldo (.zip)
+                        </button>
+                    </div>
+
+                    <div class="border-t border-slate-200"></div>
+
+                    <!-- Restaurar -->
+                    <div id="restore-form-container" class="space-y-3 p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider block">2. Restaurar Copia Anterior</span>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Suba una copia de seguridad ZIP para restaurar el inventario de correspondencia digital.
+                        </p>
+                        <form id="restore-form" class="flex items-center gap-2">
+                            <input type="file" id="restore-file" required accept=".zip"
+                                class="block w-full border border-slate-300 rounded-lg p-1.5 text-xs bg-white">
+                            <button type="submit"
+                                class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg uppercase tracking-wider shadow">
+                                Cargar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: AUDITORÍA GLOBAL DE MOVIMIENTOS (ADMIN SOLO) -->
+    <div id="audit-modal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 backdrop-blur-sm hidden animate-fade-in no-print">
+        <div class="glass-modal w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Historial de Auditoría General (SIFAD-MB)</h3>
+                <button class="audit-back-btn hidden px-3 py-1 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-[10px] font-bold rounded-lg uppercase tracking-wider transition-colors" onclick="window.close()">Regresar a la página anterior</button>
+                <button onclick="closeModal('audit-modal')" class="audit-close-btn text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition-colors" title="Cerrar">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <div class="p-4 bg-slate-50/50 border-b border-slate-200 flex items-center gap-3">
+                <div class="relative flex-grow">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </span>
+                    <input type="text" id="audit-search-input" oninput="filterGlobalAuditLog()"
+                        class="block w-full pl-9 pr-3 py-2 premium-input rounded-lg text-xs focus:ring-0 focus:outline-none placeholder-slate-400"
+                        placeholder="Filtrar por acción, responsable, expediente...">
+                </div>
+            </div>
+
+            <div class="p-6 overflow-y-auto flex-grow">
+                <ul id="global-audit-list" class="space-y-4 relative border-l border-slate-200 ml-3 pl-3">
+                    <li class="text-center text-slate-400 py-4 font-semibold">Cargando historial de auditoría...</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CIERRE SEMANAL (REPORTES) -->
+    <div id="reports-modal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 backdrop-blur-sm hidden animate-fade-in no-print">
+        <div class="glass-modal w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <h3 class="font-bold text-slate-800 text-xs uppercase tracking-wider flex items-center gap-2">
+                    <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Reporte de Cierre Semanal
+                </h3>
+                <button class="reports-back-btn hidden px-3 py-1 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-[10px] font-bold rounded-lg uppercase tracking-wider transition-colors" onclick="window.close()">Regresar a la página anterior</button>
+                <button onclick="closeModal('reports-modal')" class="reports-close-btn text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition-colors" title="Cerrar">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <p class="text-xs text-slate-500 font-semibold leading-relaxed">
+                    Seleccione el rango de fechas (Lunes a Viernes) para compilar las actividades de archivo.
+                </p>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Fecha de
+                            Inicio</label>
+                        <input type="date" id="rep-inicio"
+                            class="block w-full border border-slate-300 rounded-lg p-2 text-xs premium-input font-medium focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Fecha de
+                            Fin</label>
+                        <input type="date" id="rep-fin"
+                            class="block w-full border border-slate-300 rounded-lg p-2 text-xs premium-input font-medium focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="space-y-3 pt-4 border-t border-slate-200">
+                    <button onclick="generateWeeklyReport(); closeModal('reports-modal');"
+                        class="w-full px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold rounded-lg shadow uppercase tracking-widest transition-colors text-center flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Generar Cierre Digital (HTML)
+                    </button>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="exportWeeklyReport('excel')"
+                            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold rounded-lg shadow uppercase tracking-widest transition-colors text-center flex items-center justify-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            Excel
+                        </button>
+                        <button onclick="exportWeeklyReport('word')"
+                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold rounded-lg shadow uppercase tracking-widest transition-colors text-center flex items-center justify-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            Word
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==============================================================================
+       PANTALLA standalone: SEGUIMIENTO DE ESTATUS (Kanban Workflow Board)
+       ============================================================================== -->
+    <div id="workflow-screen" class="hidden min-h-screen w-full bg-slate-100 flex flex-col p-6 md:p-8 no-print">
+        <!-- Encabezado del Tablero Workflow -->
+        <div class="max-w-[1450px] w-full mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+            <div class="flex flex-col">
+                <h1 class="text-xl font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                    <span>Seguimiento y Monitoreo de Estatus</span>
+                </h1>
+                <span class="text-xs text-slate-400 font-semibold tracking-wider">SIFAD-MB / Pipeline de Flujo Documental</span>
+            </div>
+            
+            <!-- Barra de Herramientas de Búsqueda Rápida en Kanban -->
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <input type="text" id="workflow-search" placeholder="Buscar por código o título..."
+                    oninput="renderWorkflowBoard()"
+                    class="block w-64 border border-slate-200 rounded-xl p-2.5 text-xs premium-input font-semibold focus:outline-none bg-white">
+                <button onclick="window.close()" 
+                    class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-sm">
+                    Volver al Dashboard
+                </button>
+            </div>
+        </div>
+
+        <!-- Tablero Kanban Horizontal -->
+        <div class="max-w-[1450px] w-full mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 flex-grow items-start">
+            
+            <!-- Columna 1: Pendiente por Archivar -->
+            <div class="bg-white border border-slate-200 rounded-2xl flex flex-col shadow-sm max-h-[82vh]">
+                <div class="px-4 py-3.5 bg-amber-500/10 border-b border-slate-100 rounded-t-2xl flex items-center justify-between">
+                    <span class="text-xs font-bold text-amber-700 uppercase tracking-wider flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span>Pendientes por Archivar</span>
+                    </span>
+                    <span id="count-col-pendientes" class="text-[10px] font-black bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">0</span>
+                </div>
+                <div id="col-pendientes" ondragover="allowDrop(event)" ondrop="drop(event, 'Pendiente por Archivar')" class="p-3.5 space-y-3 overflow-y-auto min-h-[50vh] max-h-[72vh] bg-slate-50/50 rounded-b-2xl">
+                    <!-- Tarjetas de documentos -->
+                </div>
+            </div>
+
+            <!-- Columna 2: Disponible -->
+            <div class="bg-white border border-slate-200 rounded-2xl flex flex-col shadow-sm max-h-[82vh]">
+                <div class="px-4 py-3.5 bg-emerald-500/10 border-b border-slate-100 rounded-t-2xl flex items-center justify-between">
+                    <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span>Disponibles en Estante</span>
+                    </span>
+                    <span id="count-col-disponibles" class="text-[10px] font-black bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">0</span>
+                </div>
+                <div id="col-disponibles" ondragover="allowDrop(event)" ondrop="drop(event, 'Disponible')" class="p-3.5 space-y-3 overflow-y-auto min-h-[50vh] max-h-[72vh] bg-slate-50/50 rounded-b-2xl">
+                    <!-- Tarjetas de documentos -->
+                </div>
+            </div>
+
+            <!-- Columna 3: Prestado -->
+            <div class="bg-white border border-slate-200 rounded-2xl flex flex-col shadow-sm max-h-[82vh]">
+                <div class="px-4 py-3.5 bg-blue-500/10 border-b border-slate-100 rounded-t-2xl flex items-center justify-between">
+                    <span class="text-xs font-bold text-blue-700 uppercase tracking-wider flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                        <span>En Préstamo Externo</span>
+                    </span>
+                    <span id="count-col-prestados" class="text-[10px] font-black bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">0</span>
+                </div>
+                <div id="col-prestados" ondragover="allowDrop(event)" ondrop="drop(event, 'Prestado')" class="p-3.5 space-y-3 overflow-y-auto min-h-[50vh] max-h-[72vh] bg-slate-50/50 rounded-b-2xl">
+                    <!-- Tarjetas de documentos -->
+                </div>
+            </div>
+
+            <!-- Columna 4: Incompleto -->
+            <div class="bg-white border border-slate-200 rounded-2xl flex flex-col shadow-sm max-h-[82vh]">
+                <div class="px-4 py-3.5 bg-rose-500/10 border-b border-slate-100 rounded-t-2xl flex items-center justify-between">
+                    <span class="text-xs font-bold text-rose-700 uppercase tracking-wider flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        <span>Expedientes Incompletos</span>
+                    </span>
+                    <span id="count-col-incompletos" class="text-[10px] font-black bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full">0</span>
+                </div>
+                <div id="col-incompletos" ondragover="allowDrop(event)" ondrop="drop(event, 'Incompleto')" class="p-3.5 space-y-3 overflow-y-auto min-h-[50vh] max-h-[72vh] bg-slate-50/50 rounded-b-2xl">
+                    <!-- Tarjetas de documentos -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Scripts de la SPA -->
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script src="assets/js/forms.js"></script>
+    <script src="assets/js/report.js"></script>
+    <script src="assets/js/backup.js"></script>
+    
+    <!-- Contenedor para impresión de boleta de préstamo (oculto en pantalla, visible en print) -->
+    <div id="boleta-print-screen" class="hidden"></div>
+</body>
+
+</html>

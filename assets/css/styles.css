@@ -1,0 +1,247 @@
+/* ==============================================================================
+   SIFAD-MB - Estilo de Diseño Monday.com Corporativo Claro (Light Theme)
+   ============================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --font-sans: 'Inter', sans-serif;
+    --bg-main: #f6f8fa;
+    --border-color: #e1e4e8;
+    --text-primary: #24292e;
+    --text-secondary: #586069;
+    --color-disponible: #00c875;
+    --color-prestado: #0086f0;
+    --color-archivar: #ffad00;
+    --color-incompleto: #94a3b8;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overscroll-behavior: none;
+    -webkit-overscroll-behavior: none;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    overflow: hidden;
+    height: 100%;
+}
+
+/* Panel de Vidrio Esmerilado Claro (Light Glassmorphism) */
+.glass-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.glass-modal {
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Scrollbar Corporativa Fina */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f3f4f6;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Estructura de Tabla Estilo Monday.com Oficial */
+.table-compact th {
+    padding: 12px 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+    border-right: 1px solid #edf2f7;
+    background-color: #ffffff;
+}
+
+.table-compact td {
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid #edf2f7;
+    border-right: 1px solid #edf2f7;
+}
+
+.table-compact tbody tr {
+    transition: background-color 0.15s ease;
+    cursor: pointer;
+}
+
+.table-compact tbody tr:hover {
+    background-color: #f8fafc !important;
+}
+
+/* Estatus Sólidos Requeridos (Estilo de Bloques de Color de Monday) */
+.status-badge-disponible {
+    background-color: var(--color-disponible) !important;
+    color: #ffffff !important;
+    font-weight: 700;
+    text-align: center;
+}
+
+.status-badge-archivar {
+    background-color: var(--color-archivar) !important;
+    color: #ffffff !important;
+    font-weight: 700;
+    text-align: center;
+}
+
+.status-badge-prestado {
+    background-color: var(--color-prestado) !important;
+    color: #ffffff !important;
+    font-weight: 700;
+    text-align: center;
+}
+
+.status-badge-incompleto {
+    background-color: var(--color-incompleto) !important;
+    color: #ffffff !important;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* Desplazamiento del Cajón de Detalles Derecho (Slide Drawer) */
+#details-drawer {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Estilos de Pestañas del Cajón */
+.drawer-tab {
+    padding: 10px 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid transparent;
+    color: var(--text-secondary);
+    transition: all 0.15s ease;
+}
+
+.drawer-tab:hover {
+    color: var(--text-primary);
+}
+
+.drawer-tab.active {
+    color: #4f46e5;
+    border-color: #4f46e5;
+}
+
+/* Animaciones */
+@keyframes slideInFromRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.animate-slide-in {
+    animation: slideInFromRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Entradas de Formulario Limpias (Inputs) */
+.premium-input {
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    color: var(--text-primary);
+    transition: all 0.15s ease;
+}
+
+.premium-input:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    outline: none;
+}
+
+/* Sidebar Estilo Monday Clásico (Panel de Control) */
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #d1d5db;
+    transition: all 0.15s ease;
+}
+
+.sidebar-link:hover, .sidebar-link.active {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-link.active {
+    background: #4f46e5;
+}
+
+/* ==============================================================================
+   REGLAS EXCLUSIVAS DE IMPRESIÓN (Boleta de Salida)
+   ============================================================================== */
+@media print {
+    body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-size: 11pt !important;
+    }
+
+    #login-screen, 
+    #dashboard-screen, 
+    #backup-lock-screen, 
+    #details-drawer,
+    .no-print {
+        display: none !important;
+    }
+
+    #boleta-print-screen {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+}
+
+/* Estilos para el mapa de estanterías 2D */
+.rack-shelf {
+    background-color: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 12px 6px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: #64748b;
+    transition: all 0.2s ease-in-out;
+}
+
+.rack-shelf.active {
+    background-color: #4f46e5 !important;
+    border-color: #4338ca !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    transform: translateY(-2px);
+}
