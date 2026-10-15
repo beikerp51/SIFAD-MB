@@ -464,47 +464,55 @@
     </div>
 
     <!-- ==============================================================================
-       CAJÓN DE DETALLES DERECHO SLIDE-IN (Réplica Monday.com Updates Drawer)
+    <!-- ==============================================================================
+       CAJÓN DE DETALLES DERECHO SLIDE-IN (Responsive Móvil y Escritorio)
        ============================================================================== -->
+    <!-- Fondo oscuro difuminado para Drawer en móviles y desktop -->
+    <div id="details-drawer-overlay" onclick="closeDetailsDrawer()"
+        class="fixed inset-0 bg-slate-950/50 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300 no-print">
+    </div>
+
     <div id="details-drawer"
-        class="fixed right-0 top-0 h-full w-[450px] md:w-[580px] bg-white z-50 shadow-2xl border-l border-slate-300 transform translate-x-full overflow-y-auto flex flex-col no-print">
+        class="fixed right-0 top-0 h-full w-full sm:w-[480px] md:w-[600px] max-w-full bg-white z-50 shadow-2xl border-l border-slate-200 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col no-print safe-top safe-bottom">
         <!-- Encabezado Cajón -->
-        <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
-            <div class="flex flex-col">
-                <span id="drawer-doc-code" class="text-sm font-mono font-bold text-slate-900">#CÓDIGO</span>
-                <span id="drawer-doc-title" class="text-xs text-slate-500 truncate max-w-[280px]">Detalle del
-                    expediente...</span>
+        <div class="px-4 sm:px-6 py-3.5 sm:py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between flex-shrink-0">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <button onclick="closeDetailsDrawer()" class="sm:hidden p-1.5 -ml-1 text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-200/60 transition-colors" title="Volver">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <div class="flex flex-col min-w-0">
+                    <span id="drawer-doc-code" class="text-xs sm:text-sm font-mono font-bold text-slate-900 truncate">#CÓDIGO</span>
+                    <span id="drawer-doc-title" class="text-[11px] sm:text-xs text-slate-500 truncate max-w-[200px] sm:max-w-[320px]">Detalle del expediente...</span>
+                </div>
             </div>
             <button onclick="closeDetailsDrawer()"
-                class="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition-colors" title="Cerrar">
+                class="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition-colors flex-shrink-0" title="Cerrar">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
 
-        <!-- Barra de Pestañas del Cajón -->
-        <div class="flex border-b border-slate-200 px-4 bg-slate-50/50">
+        <!-- Barra de Pestañas del Cajón (Desplazable horizontalmente en móviles) -->
+        <div class="flex border-b border-slate-200 px-3 sm:px-4 bg-slate-50/70 overflow-x-auto whitespace-nowrap scrollbar-none flex-shrink-0">
             <button id="tab-btn-details" onclick="switchDrawerTab('details')"
-                class="drawer-tab active">Detalles</button>
-            <button id="tab-btn-upload" onclick="switchDrawerTab('upload')" class="drawer-tab">Archivo Digital</button>
-            <button id="tab-btn-loans" onclick="switchDrawerTab('loans')" class="drawer-tab">Préstamos</button>
-            <button id="tab-btn-timeline" onclick="switchDrawerTab('timeline')" class="drawer-tab">Línea de
-                Tiempo</button>
+                class="drawer-tab active text-xs py-3 px-3 sm:px-4">Detalles</button>
+            <button id="tab-btn-upload" onclick="switchDrawerTab('upload')" class="drawer-tab text-xs py-3 px-3 sm:px-4">Archivo Digital</button>
+            <button id="tab-btn-loans" onclick="switchDrawerTab('loans')" class="drawer-tab text-xs py-3 px-3 sm:px-4">Préstamos</button>
+            <button id="tab-btn-timeline" onclick="switchDrawerTab('timeline')" class="drawer-tab text-xs py-3 px-3 sm:px-4">Línea de Tiempo</button>
         </div>
 
         <!-- Cuerpo del Cajón (Paneles de Pestaña) -->
-        <div class="p-6 flex-grow overflow-y-auto">
+        <div class="p-4 sm:p-6 flex-grow overflow-y-auto">
 
             <!-- PESTAÑA A: DETALLES / EDICIÓN -->
             <div id="drawer-tab-details" class="space-y-4">
                 <form id="doc-form" class="space-y-4">
                     <input type="hidden" id="doc-id" value="">
 
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                         <div>
-                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Tipo
-                                de Documento</label>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tipo de Documento</label>
                             <select id="doc-tipo" required
-                                class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-semibold focus:outline-none">
+                                class="block w-full border border-slate-300 rounded-xl p-2.5 text-xs sm:text-sm premium-input font-semibold focus:outline-none">
                                 <option value="Orden de Pago">Orden de Pago</option>
                                 <option value="Proyecto">Proyecto</option>
                                 <option value="Obra">Obra</option>
@@ -513,40 +521,33 @@
                             </select>
                         </div>
                         <div>
-                            <label
-                                class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Beneficiario
-                                / Contratista</label>
-                            <input type="text" id="doc-beneficiario" required
-                                class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-medium">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Beneficiario / Contratista</label>
+                            <input type="text" id="doc-beneficiario" required placeholder="Nombre de empresa o persona"
+                                class="block w-full border border-slate-300 rounded-xl p-2.5 text-xs sm:text-sm premium-input font-medium">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Título o
-                            Concepto Detallado del Pago/Obra</label>
-                        <textarea id="doc-titulo" rows="3" required
-                            class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-medium"></textarea>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Título o Concepto Detallado del Pago/Obra</label>
+                        <textarea id="doc-titulo" rows="3" required placeholder="Descripción administrativa del expediente..."
+                            class="block w-full border border-slate-300 rounded-xl p-2.5 text-xs sm:text-sm premium-input font-medium"></textarea>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                         <div>
-                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Monto
-                                (VES)</label>
-                            <input type="number" step="0.01" id="doc-monto" required
-                                class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-medium">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Monto (VES)</label>
+                            <input type="number" step="0.01" id="doc-monto" required placeholder="0.00"
+                                class="block w-full border border-slate-300 rounded-xl p-2.5 text-xs sm:text-sm premium-input font-medium">
                         </div>
                         <div>
-                            <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Año
-                                Fiscal</label>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Año Fiscal</label>
                             <input type="number" id="doc-ano_fiscal" required
-                                class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-medium">
+                                class="block w-full border border-slate-300 rounded-xl p-2.5 text-xs sm:text-sm premium-input font-medium">
                         </div>
                         <div>
-                            <label
-                                class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Origen
-                                de Fondo</label>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Origen de Fondo</label>
                             <select id="doc-origen_fondo" required
-                                class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-medium">
+                                class="block w-full border border-slate-300 rounded-xl p-2.5 text-xs sm:text-sm premium-input font-medium">
                                 <option value="FCI">FCI</option>
                                 <option value="Ingresos Propios">Ingresos Propios</option>
                                 <option value="Situado Constitucional">Situado Constitucional</option>
@@ -556,48 +557,45 @@
                     </div>
 
                     <div>
-                        <label class="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Ubicación
-                            Física en Archivo</label>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Ubicación Física en Archivo</label>
                         <input type="text" id="doc-ubicacion" oninput="update2DRackMap()" required placeholder="Ej: Estante A, Caja 3, Carpeta 12"
-                            class="block w-full border border-slate-300 rounded-lg p-2.5 text-xs premium-input font-medium">
+                            class="block w-full border border-slate-300 rounded-xl p-2.5 text-xs sm:text-sm premium-input font-medium">
                     </div>
 
                     <!-- Mapa Visual de Estanterías Físicas (2D) -->
-                    <div class="bg-slate-50 p-4 border border-slate-200 rounded-xl space-y-2">
-                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Ubicador de Archivo Físico Interactivo (Estanterías)</span>
-                        <div id="rack-map-container" class="grid grid-cols-4 gap-2 bg-white p-3 rounded-lg border border-slate-100">
+                    <div class="bg-slate-50 p-4 border border-slate-200 rounded-2xl space-y-2">
+                        <span class="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">Ubicador de Archivo Físico Interactivo (Estanterías)</span>
+                        <div id="rack-map-container" class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-white p-3 rounded-xl border border-slate-200/80">
                             <!-- Inyectado dinámicamente -->
                         </div>
                     </div>
 
                     <!-- Checklist de Firmas y Sellos -->
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center justify-between">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div class="space-y-0.5">
-                            <span
-                                class="text-[10px] font-bold text-slate-700 uppercase tracking-wider block">Verificación
-                                Física</span>
-                            <span class="text-[9px] text-slate-400 font-semibold block">¿Firmas y sellos
-                                completos?</span>
+                            <span class="text-[10px] font-bold text-slate-700 uppercase tracking-wider block">Verificación Física</span>
+                            <span class="text-[10px] text-slate-400 font-semibold block">¿Firmas y sellos completos?</span>
                         </div>
-                        <div class="flex items-center gap-4">
-                            <label
-                                class="flex items-center gap-1.5 text-xs font-semibold text-slate-700 cursor-pointer">
+                        <div class="flex items-center gap-6">
+                            <label class="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer py-1">
                                 <input type="checkbox" id="doc-firmado"
                                     class="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-0">
-                                Firmado
+                                <span>Firmado</span>
                             </label>
-                            <label
-                                class="flex items-center gap-1.5 text-xs font-semibold text-slate-700 cursor-pointer">
+                            <label class="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer py-1">
                                 <input type="checkbox" id="doc-sellado"
                                     class="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-0">
-                                Sellado
+                                <span>Sellado</span>
                             </label>
                         </div>
                     </div>
 
-                    <div id="drawer-details-actions" class="pt-4 border-t border-slate-200 flex justify-end gap-2">
+                    <div id="drawer-details-actions" class="pt-4 pb-8 sm:pb-0 border-t border-slate-200 flex flex-col sm:flex-row justify-end gap-2.5">
+                        <button type="button" onclick="closeDetailsDrawer()" class="sm:hidden w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors">
+                            Cerrar
+                        </button>
                         <button type="submit"
-                            class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-sm">
+                            class="w-full sm:w-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md">
                             Guardar Expediente
                         </button>
                     </div>

@@ -318,9 +318,17 @@ async function openDetailsDrawer(id, tabName = 'details') {
             switchDrawerTab('details');
 
             const drawer = document.getElementById('details-drawer');
+            const overlay = document.getElementById('details-drawer-overlay');
             if (drawer) {
                 drawer.classList.remove('translate-x-full');
                 drawer.classList.add('translate-x-0');
+            }
+            if (overlay) {
+                overlay.classList.remove('hidden');
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                    overlay.classList.add('opacity-100');
+                }, 10);
             }
             console.log("Cajón abierto con éxito.");
             return;
@@ -535,9 +543,17 @@ async function openDetailsDrawer(id, tabName = 'details') {
 
     // Deslizar el cajón abriéndolo
     const drawer = document.getElementById('details-drawer');
+    const overlay = document.getElementById('details-drawer-overlay');
     if (drawer) {
         drawer.classList.remove('translate-x-full');
         drawer.classList.add('translate-x-0');
+    }
+    if (overlay) {
+        overlay.classList.remove('hidden');
+        setTimeout(() => {
+            overlay.classList.remove('opacity-0');
+            overlay.classList.add('opacity-100');
+        }, 10);
     }
     } catch (err) {
         console.error("Falla en openDetailsDrawer:", err);
@@ -550,9 +566,15 @@ async function openDetailsDrawer(id, tabName = 'details') {
  */
 function closeDetailsDrawer() {
     const drawer = document.getElementById('details-drawer');
+    const overlay = document.getElementById('details-drawer-overlay');
     if (drawer) {
         drawer.classList.remove('translate-x-0');
         drawer.classList.add('translate-x-full');
+    }
+    if (overlay) {
+        overlay.classList.remove('opacity-100');
+        overlay.classList.add('opacity-0');
+        setTimeout(() => overlay.classList.add('hidden'), 300);
     }
 }
 

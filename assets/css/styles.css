@@ -129,6 +129,14 @@ body {
     box-shadow: -4px 0 24px rgba(0, 0, 0, 0.08);
 }
 
+@media (max-width: 639px) {
+    #details-drawer {
+        width: 100% !important;
+        max-width: 100vw !important;
+        border-left: none !important;
+    }
+}
+
 /* Estilos de Pestañas del Cajón */
 .drawer-tab {
     padding: 10px 16px;
