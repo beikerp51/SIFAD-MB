@@ -2,9 +2,15 @@
   "name": "SIFAD-MB - Sistema de Información Financiera y Archivo Documental",
   "short_name": "SIFAD-MB",
   "description": "Sistema de Información Financiera y Archivo Documental de la Alcaldía Bolivariana de Maracaibo",
+  "id": "/SIFAD-MB/",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": [
+    "fullscreen",
+    "standalone",
+    "minimal-ui"
+  ],
   "orientation": "any",
   "background_color": "#f6f8fa",
   "theme_color": "#1e293b",
@@ -30,9 +36,9 @@
     },
     {
       "src": "assets/images/logo_gestion.png",
-      "sizes": "225x225",
+      "sizes": "314x378",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }

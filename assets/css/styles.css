@@ -297,6 +297,10 @@ html {
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.04);
 }
 
+.mobile-bottom-bar.hidden {
+    display: none !important;
+}
+
 .mobile-bottom-item {
     display: flex;
     flex-direction: column;

@@ -3,7 +3,7 @@
  * Alcaldía Bolivariana de Maracaibo - Dirección General de Administración y Finanzas
  */
 
-const CACHE_NAME = 'sifad-mb-cache-v1.0.0';
+const CACHE_NAME = 'sifad-mb-cache-v1.0.1';
 
 const PRECACHE_ASSETS = [
     './',

@@ -487,11 +487,13 @@ function routeApplication() {
         const loginScreen = document.getElementById('login-screen');
         const dashboardScreen = document.getElementById('dashboard-screen');
         const backupLockScreen = document.getElementById('backup-lock-screen');
+        const mobileBottomBar = document.getElementById('mobile-bottom-bar');
 
-        // Ocultar todas las pantallas por defecto
+        // Ocultar todas las pantallas y barras por defecto
         if (loginScreen) loginScreen.classList.add('hidden');
         if (dashboardScreen) dashboardScreen.classList.add('hidden');
         if (backupLockScreen) backupLockScreen.classList.add('hidden');
+        if (mobileBottomBar) mobileBottomBar.classList.add('hidden');
 
         // Cargar textos de créditos requeridos
         const loginCredits = document.getElementById('login-credits');
@@ -508,6 +510,7 @@ function routeApplication() {
             if (loginUser) loginUser.value = '';
             if (loginPass) loginPass.value = '';
             if (loginScreen) loginScreen.classList.remove('hidden');
+            if (mobileBottomBar) mobileBottomBar.classList.add('hidden');
             return;
         }
 
@@ -518,10 +521,13 @@ function routeApplication() {
             const lockDateEl = document.getElementById('lock-last-backup-date');
             if (lockDateEl) lockDateEl.textContent = formatted;
             if (backupLockScreen) backupLockScreen.classList.remove('hidden');
+            if (mobileBottomBar) mobileBottomBar.classList.add('hidden');
             return;
         }
 
         // Si todo está correcto, cargar Dashboard (o vista standalone en nueva pestaña)
+        if (mobileBottomBar) mobileBottomBar.classList.remove('hidden');
+
         const welcomeEl = document.getElementById('header-user-welcome');
         if (welcomeEl) welcomeEl.textContent = 'Bienvenido, ' + session.nombre_completo;
 

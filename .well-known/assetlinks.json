@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.beikerp51.sifadmb",
+      "sha256_cert_fingerprints": [
+        "14:6D:E9:7B:0F:52:AB:FC:02:16:FE:48:42:35:E4:7F:C0:0E:B9:4C:6A:B9:0D:37:C3:97:78:E8:BC:2E:CA:04"
+      ]
+    }
+  }
+]
